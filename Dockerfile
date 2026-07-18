@@ -11,4 +11,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY . .
 
-CMD ["python", "two_llama_model.py"]
+EXPOSE 8000
+
+# 세무 챗봇 웹 API (FastAPI). Ollama 주소는 OLLAMA_BASE_URL 로 주입.
+CMD ["fastapi", "run", "api/index.py", "--host", "0.0.0.0", "--port", "8000"]

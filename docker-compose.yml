@@ -1,27 +1,26 @@
+# 세무 챗봇 웹 API (FastAPI) 를 Docker 로 실행합니다.
+#
+# 모델 서빙(Ollama)은 호스트에서 실행 중인 Ollama 를 재사용합니다.
+# 컨테이너 안에 무거운 LLM(수 GB) 을 중복으로 올리지 않아 리소스가 가볍습니다.
+#
+# 사전 준비 (호스트에서 1회):
+#   1) Ollama 설치 및 실행         : https://ollama.com/download  (기본 포트 11434)
+#   2) GGUF 다운로드                : python scripts/download_models.py
+#   3) Ollama 모델 등록             : python scripts/create_ollama_models.py
+#      → bllossom_3b_classifier:q4km, bllossom_8b_tax_answer:q4km 생성 확인
+#
+# 실행:
+#   docker compose up --build      → http://localhost:8000 (문서: /docs)
 services:
-  ollama:
-    image: ollama/ollama:latest
-    container_name: tax-ollama
-    ports:
-      - "11434:11434"
-    volumes:
-      - ollama_data:/root/.ollama
-      - ./models:/models
-    restart: unless-stopped
-
   chatbot:
     build: .
     container_name: tax-chatbot
-    depends_on:
-      - ollama
     environment:
-      OLLAMA_HOST: http://ollama:11434
-      USE_EXTERNAL_OLLAMA: "1"
-    volumes:
-      - .:/app
-    stdin_open: true
-    tty: true
-    command: python two_llama_model.py
-
-volumes:
-  ollama_data:
+      # 호스트에서 도는 Ollama 에 접속 (Docker Desktop / Linux 모두 host-gateway 로 해석)
+      OLLAMA_BASE_URL: http://host.docker.internal:11434
+      ALLOWED_ORIGINS: "http://localhost:3000,http://localhost:8000"
+    ports:
+      - "8000:8000"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    restart: unless-stopped
