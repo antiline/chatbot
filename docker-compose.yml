@@ -19,6 +19,8 @@ services:
       # 호스트에서 도는 Ollama 에 접속 (Docker Desktop / Linux 모두 host-gateway 로 해석)
       OLLAMA_BASE_URL: http://host.docker.internal:11434
       ALLOWED_ORIGINS: "http://localhost:3000,http://localhost:8000"
+      # 인터넷 노출 시 Bearer 토큰으로 보호. .env 또는 셸 환경변수로 주입(미설정이면 인증 없음).
+      CHATBOT_TOKEN: ${CHATBOT_TOKEN:-}
     ports:
       - "8000:8000"
     extra_hosts:

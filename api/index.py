@@ -1,6 +1,7 @@
 import os
+import secrets
 
-from fastapi import FastAPI, HTTPException
+from fastapi import Depends, FastAPI, Header, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
 
@@ -11,6 +12,20 @@ app = FastAPI(
     title="세무 AI 챗봇 API",
     version="1.0.0",
 )
+
+
+# 인터넷에 노출(예: Cloudflare Tunnel)할 때는 CHATBOT_TOKEN 을 설정해 보호한다.
+# 미설정(로컬 개발)이면 인증을 건너뛴다.
+CHATBOT_TOKEN = os.getenv("CHATBOT_TOKEN", "").strip()
+
+
+def require_token(authorization: str = Header(default="")) -> None:
+    if not CHATBOT_TOKEN:
+        return  # 로컬 개발: 토큰 미설정 시 열어둠
+
+    scheme, _, credential = authorization.partition(" ")
+    if scheme.lower() != "bearer" or not secrets.compare_digest(credential, CHATBOT_TOKEN):
+        raise HTTPException(status_code=401, detail="Unauthorized")
 
 
 allowed_origins = [
@@ -63,7 +78,7 @@ def health() -> dict[str, str]:
 
 
 @app.post("/api/chat", response_model=ChatResponse)
-def chat(request: ChatRequest) -> ChatResponse:
+def chat(request: ChatRequest, _: None = Depends(require_token)) -> ChatResponse:
     try:
         result = process_question(
             question=request.question,
