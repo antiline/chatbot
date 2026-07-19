@@ -10,3 +10,5 @@ models/**
 
 !models/Modelfile.classifier
 !models/Modelfile.answer
+# 배포 비밀 (터널 credentials 등)
+secrets/
