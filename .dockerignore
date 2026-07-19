@@ -1,0 +1,9 @@
+.git
+.venv
+__pycache__
+*.pyc
+models/*.gguf
+models/_hf
+.env
+.env.local
+*.csv
