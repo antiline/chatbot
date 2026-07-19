@@ -1,17 +1,17 @@
 # 맥미니 배포 오버레이 — 호스트 포트 0개 + 터널까지 한 compose.
 # 챗봇은 포트를 발행하지 않고, cloudflared 컨테이너가 내부망으로 접근한다.
+# 터널은 대시보드 관리형 — TUNNEL_TOKEN(.env) 하나로 실행, ingress 는 Cloudflare 대시보드.
 services:
   chatbot:
-    # host 포트 발행 안 함 (base 의 8000:8000 을 제거). cloudflared 가 chatbot:8000 내부접근.
+    # host 포트 발행 안 함 (base 의 8000:8000 제거). cloudflared 가 chatbot:8000 내부접근.
     ports: !reset []
 
   cloudflared:
     image: cloudflare/cloudflared:latest
     container_name: tax-cloudflared
-    command: tunnel --no-autoupdate --config /etc/cloudflared/config.yml run
-    volumes:
-      - ./cloudflared/config.yml:/etc/cloudflared/config.yml:ro
-      - ./secrets/tunnel-creds.json:/etc/cloudflared/creds.json:ro
+    command: tunnel --no-autoupdate run
+    environment:
+      TUNNEL_TOKEN: ${TUNNEL_TOKEN:?.env 에 TUNNEL_TOKEN 을 설정하세요}
     depends_on:
       - chatbot
     restart: unless-stopped

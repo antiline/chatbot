@@ -1,9 +1,0 @@
-# Cloudflare Tunnel 설정 (cloudflared 컨테이너가 사용).
-# 호스트 포트를 열지 않고, 내부 네트워크의 chatbot 서비스로 라우팅한다.
-tunnel: semuflow-chatbot
-credentials-file: /etc/cloudflared/creds.json
-
-ingress:
-  - hostname: llm.semuflow.com
-    service: http://chatbot:8000
-  - service: http_status:404
