@@ -16,8 +16,7 @@ docker compose (호스트 포트 발행 0):
 ## 사전 준비 (호스트, 1회)
 1. Ollama 실행(brew) + 모델 등록
    ```
-   python scripts/download_models.py
-   python scripts/create_ollama_models.py   # bllossom_3b_classifier:q4km, bllossom_8b_tax_answer:q4km
+   python scripts/create_ollama_models.py   # ollama pull qwen3:30b → qwen3:30b-64k 생성
    ```
 2. Cloudflare Zero Trust → Networks → Tunnels → **Create a tunnel**(Cloudflared)
    - 설치 화면의 **토큰(eyJ…)** 을 `.env` 의 `TUNNEL_TOKEN` 에 넣는다

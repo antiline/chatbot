@@ -8,7 +8,7 @@ from ollama_utils import ollama_session
 classifier_store = {}
 answer_store = {}
 
-ANSWER_MODEL_NAME = "bllossom_8b_tax_answer:q4km"
+ANSWER_MODEL_NAME = "qwen3:30b-64k"
 
 SYSTEM_PROMPT = """
 너는 한국어 세무사 AI 챗봇이다.
@@ -118,10 +118,12 @@ def has_answer_history(session_id: str) -> bool:
 def main():
     # Ollama 자동 실행 및 상담 종료 시 자동 종료
     with ollama_session():
+        # qwen3 는 reasoning=True 여야 사고과정이 content 밖으로 분리돼 출력이 깨끗하다.
+        # 30B 는 GPU 로드가 정상이므로 num_gpu 강제(CPU)는 제거.
         llm = ChatOllama(
             model=ANSWER_MODEL_NAME,
             temperature=0,
-            num_gpu=0
+            reasoning=True,
         )
         # 분류기
         classifier_chain = classifier_prompt | llm

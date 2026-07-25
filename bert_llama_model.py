@@ -16,7 +16,7 @@ answer_store = {}
 
 CLASSIFIER_BERT_MODEL_DIR = "./model/kobert_tax_classifier"
 
-ANSWER_MODEL_NAME = "bllossom_8b_tax_answer:q4km"      # 세무 답변 생성 모델
+ANSWER_MODEL_NAME = "qwen3:30b-64k"      # 세무 답변 생성 모델
 
 ID2LABEL = {
     0: "비세무",
@@ -184,10 +184,12 @@ def main():
             model_dir=CLASSIFIER_BERT_MODEL_DIR,
             max_length=BERT_MAX_LENGTH
         )
+        # qwen3 는 reasoning=True 여야 사고과정이 content 밖으로 분리돼 답변이 깨끗하다.
+        # 30B 는 GPU 로드가 정상이므로 num_gpu 강제(CPU)는 제거.
         answer_llm = ChatOllama(
             model=ANSWER_MODEL_NAME,
             temperature=0,
-            num_gpu=0,
+            reasoning=True,
         )
         
         # 답변기
@@ -202,7 +204,7 @@ def main():
 
         print("세무사 AI Chatbot (분류기/답변기 2모델 분리)")
         print(f"- 분류기 모델: {CLASSIFIER_BERT_MODEL_DIR}")
-        print(f"- 답변기 모델: {ANSWER_MODEL_NAME} (CPU)")
+        print(f"- 답변기 모델: {ANSWER_MODEL_NAME} (GPU)")
         print("종료하려면 '종료' 또는 '끝' 입력")
         print()
         

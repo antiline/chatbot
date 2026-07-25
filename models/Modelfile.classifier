@@ -1,9 +1,0 @@
-FROM llama-3.2-Korean-Bllossom-3B-gguf-Q4_K_M.gguf
-# 라마3 계열의 채팅 토큰/템플릿
-TEMPLATE """<|begin_of_text|>{{ if .System }}<|start_header_id|>system<|end_header_id|>
-{{ .System }}<|eot_id|>{{ end }}{{ range .Messages }}<|start_header_id|>{{ .Role }}<|end_header_id|>
-{{ .Content }}<|eot_id|>{{ end }}<|start_header_id|>assistant<|end_header_id|>
-"""
-
-PARAMETER stop "<|eot_id|>"
-PARAMETER stop "<|end_of_text|>"

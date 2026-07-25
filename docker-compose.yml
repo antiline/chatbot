@@ -5,9 +5,8 @@
 #
 # 사전 준비 (호스트에서 1회):
 #   1) Ollama 설치 및 실행         : https://ollama.com/download  (기본 포트 11434)
-#   2) GGUF 다운로드                : python scripts/download_models.py
-#   3) Ollama 모델 등록             : python scripts/create_ollama_models.py
-#      → bllossom_3b_classifier:q4km, bllossom_8b_tax_answer:q4km 생성 확인
+#   2) Ollama 모델 등록             : python scripts/create_ollama_models.py
+#      → ollama pull qwen3:30b 후 qwen3:30b-64k 생성 확인
 #
 # 실행:
 #   docker compose up --build      → http://localhost:8000 (문서: /docs)

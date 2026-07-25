@@ -12,7 +12,7 @@ from langchain_core.prompts import ChatPromptTemplate
 # =========================
 # 설정
 # =========================
-CLASSIFIER_MODEL_NAME = "bllossom_8b_tax_answer:q4km"
+CLASSIFIER_MODEL_NAME = "qwen3:30b-64k"
 
 CSV_PATH = "valid.csv"   # 평가용 CSV 경로
 QUESTION_COL = "text"    # 질문 컬럼명
@@ -97,10 +97,11 @@ def normalize_gold_label(label) -> str:
 # 분류기 체인 생성
 # =========================
 def build_classifier_chain():
+    # qwen3 는 reasoning=True 여야 사고과정이 content 밖으로 분리돼 라벨이 깨끗하다.
     llm = ChatOllama(
         model=CLASSIFIER_MODEL_NAME,
         temperature=0,
-        num_gpu=0,   # 필요시 0(CPU)로 변경 가능
+        reasoning=True,
     )
 
     prompt = ChatPromptTemplate.from_messages([
