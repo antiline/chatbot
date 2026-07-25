@@ -10,8 +10,10 @@ from langchain_core.chat_history import InMemoryChatMessageHistory
 classifier_store: dict[str, InMemoryChatMessageHistory] = {}
 answer_store: dict[str, InMemoryChatMessageHistory] = {}
 
-CLASSIFIER_MODEL_NAME = "bllossom_3b_classifier:q4km"
-ANSWER_MODEL_NAME = "bllossom_8b_tax_answer:q4km"
+# qwen3:30b (MoE, 30B/활성 3B) 로 통일. num_ctx 64K 를 구운 로컬 파생 태그.
+# Hermes fallback 과 같은 태그를 공유해 Ollama 에 한 벌만 로드되도록 한다.
+CLASSIFIER_MODEL_NAME = "qwen3:30b-64k"
+ANSWER_MODEL_NAME = "qwen3:30b-64k"
 
 # /api를 붙이지 않습니다.
 # 예: http://localhost:11434
@@ -102,19 +104,26 @@ classifier_prompt = ChatPromptTemplate.from_messages(
 
 
 # Vercel 안에서 Ollama를 실행하지 않고 외부 주소에 접속합니다.
+# qwen3 는 reasoning=True 여야 사고과정이 message.content 밖(별도 필드)으로
+# 분리돼 content 가 깨끗해진다. think=false 로 두면 오히려 영어 사고과정이
+# content 에 그대로 새어나와 분류 라벨과 답변을 오염시킨다.
+# 분류기는 라벨 전에 짧게 사고하므로 num_predict 를 라벨이 나올 만큼 키운다
+# (5 로는 사고 도중 잘려 라벨이 안 나옴).
 classifier_llm = ChatOllama(
     model=CLASSIFIER_MODEL_NAME,
     base_url=OLLAMA_BASE_URL,
     temperature=0.0,
-    num_predict=5,
+    num_predict=512,
     repeat_penalty=1.3,
     repeat_last_n=256,
+    reasoning=True,
 )
 
 answer_llm = ChatOllama(
     model=ANSWER_MODEL_NAME,
     base_url=OLLAMA_BASE_URL,
     temperature=0.0,
+    reasoning=True,
 )
 
 classifier_chain = classifier_prompt | classifier_llm
