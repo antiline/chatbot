@@ -3,8 +3,8 @@ from __future__ import annotations
 import subprocess
 
 # 분류기·답변 모두 이 단일 로컬 태그를 쓴다(Ollama 에 한 벌만 로드).
-BASE_MODEL = "qwen3:30b"          # Ollama 레지스트리에서 직접 pull (HF GGUF 불필요)
-MODEL_NAME = "qwen3:30b-64k"      # num_ctx 64K 를 구운 파생 태그
+BASE_MODEL = "qwen2.5:7b"          # Ollama 레지스트리에서 직접 pull (HF GGUF 불필요)
+MODEL_NAME = "qwen2.5:7b-64k"      # num_ctx 64K 를 구운 파생 태그
 MODELFILE = "models/Modelfile.qwen3-64k"
 
 

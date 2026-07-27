@@ -12,7 +12,7 @@ from langchain_core.prompts import ChatPromptTemplate
 # =========================
 # 설정
 # =========================
-CLASSIFIER_MODEL_NAME = "qwen3:30b-64k"
+CLASSIFIER_MODEL_NAME = "qwen2.5:7b-64k"
 
 CSV_PATH = "valid.csv"   # 평가용 CSV 경로
 QUESTION_COL = "text"    # 질문 컬럼명
@@ -97,11 +97,10 @@ def normalize_gold_label(label) -> str:
 # 분류기 체인 생성
 # =========================
 def build_classifier_chain():
-    # qwen3 는 reasoning=True 여야 사고과정이 content 밖으로 분리돼 라벨이 깨끗하다.
+    # qwen2.5 는 비추론 모델 — reasoning/think 파라미터를 넣지 않는다(넣으면 행).
     llm = ChatOllama(
         model=CLASSIFIER_MODEL_NAME,
         temperature=0,
-        reasoning=True,
     )
 
     prompt = ChatPromptTemplate.from_messages([

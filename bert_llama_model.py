@@ -16,7 +16,7 @@ answer_store = {}
 
 CLASSIFIER_BERT_MODEL_DIR = "./model/kobert_tax_classifier"
 
-ANSWER_MODEL_NAME = "qwen3:30b-64k"      # 세무 답변 생성 모델
+ANSWER_MODEL_NAME = "qwen2.5:7b-64k"      # 세무 답변 생성 모델
 
 ID2LABEL = {
     0: "비세무",
@@ -184,12 +184,10 @@ def main():
             model_dir=CLASSIFIER_BERT_MODEL_DIR,
             max_length=BERT_MAX_LENGTH
         )
-        # qwen3 는 reasoning=True 여야 사고과정이 content 밖으로 분리돼 답변이 깨끗하다.
-        # 30B 는 GPU 로드가 정상이므로 num_gpu 강제(CPU)는 제거.
+        # qwen2.5 는 비추론 모델 — reasoning/think 파라미터를 넣지 않는다(넣으면 행).
         answer_llm = ChatOllama(
             model=ANSWER_MODEL_NAME,
             temperature=0,
-            reasoning=True,
         )
         
         # 답변기
